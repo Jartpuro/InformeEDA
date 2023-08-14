@@ -1,0 +1,220 @@
+---
+title: "EDA_MICali"
+author: "Jhon Alexander Rojas Tavera"
+date: "2023-08-13"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#ajustes
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(summarytools)
+library(readr)
+
+```
+
+```{r cars, message=FALSE, warning=FALSE, echo=FALSE}
+#install.packages('mice')
+#install.packages("VIM")
+require(mice)
+require(VIM)
+```
+
+```{r , echo=FALSE}
+if (!requireNamespace("tinytex", quietly = TRUE)) {
+  install.packages("tinytex")
+  tinytex::install_tinytex()
+}
+
+
+```
+
+```{css, echo=FALSE}
+.round-bullet-objetivos {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.round-bullet-objetivos li {
+  margin-bottom: 10px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.round-bullet-objetivos li::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  background-color: #007bff; /* Color de la viñeta */
+  border-radius: 50%;
+  position: absolute;
+  left: 0;
+  top: 6px;
+}
+
+<style>
+.center-text {
+  text-align: center;
+}
+
+.bold {
+  font-weight: bold;
+}
+</style>
+
+
+```
+
+```{r, echo=FALSE}
+# Paquete para crear tarjetas interactivas
+library(htmlwidgets)
+library(bs4Dash)
+```
+
+
+<h1 class="center-text bold">Informe Unidad I, Analisis exploratorio de datos</h1>
+
+
+## 1. Introducción
+
+
+El análisis del mercado inmobiliario es una herramienta crucial para comprender la dinámica y las tendencias que impactan en el sector de bienes raíces. En este informe, se abordará el análisis del mercado inmobiliario en Cali, Colombia, utilizando datos recopilados por la empresa B&C (Bienes y Casas), una agencia de bienes raíces de renombre en la ciudad.
+
+Cali, una ciudad en constante evolución, ha sido testigo de un crecimiento sustancial en el mercado inmobiliario en los últimos años. Este crecimiento está impulsado por diversos factores, como el aumento de la población, la inversión extranjera directa y la construcción de nuevos proyectos residenciales. Con el propósito de aprovechar este entorno dinámico, la empresa B&C ha recopilado y sistematizado una vasta cantidad de datos sobre viviendas en Cali, que incluyen información sobre precios, ubicaciones, características y detalles de ventas.
+
+Este informe tiene como objetivo explorar y analizar estos datos con el fin de identificar tendencias y patrones significativos que puedan servir como base para la toma de decisiones estratégicas por parte de la empresa B&C. A través de un enfoque descriptivo y analítico, se espera brindar una visión completa y precisa del mercado inmobiliario en Cali, permitiendo a la empresa tomar medidas informadas para su crecimiento y éxito continuo.
+
+El informe está estructurado en varios apartados, que incluyen objetivos, métodos utilizados, resultados obtenidos, discusión de los hallazgos, conclusiones y anexos. Cada sección proporcionará una perspectiva detallada y significativa para comprender mejor la dinámica del mercado inmobiliario en Cali.
+
+
+## 2. Objetivos
+
+
+
+<ul class="round-bullet-objetivos">
+  <li>Objetivo general:</li>
+  <p>Texto 1</p>
+  <li>Objetivo especifico 1:</li>
+  <p>Texto 1</p>
+  <li>Especifico 2:</li>
+  <p>Texto 1</p>
+</ul>
+
+
+
+## 3. Métodos
+
+Lectura de la base de datos desde archivo CSV, en mi caso la hice mediante el uso del fichero remitido por la profesora denominado "vivienda_faltantes.csv", con las siguientes acciones en RStudio: File, Import DataSet, From Text(readr) y el nombre del archivo se paso como atributo a la variable "Baseviviendas":
+
+
+```{r}
+
+Baseviviendas <- read_csv("vivienda_faltantes.csv")
+head(Baseviviendas)
+
+```
+
+```{r}
+
+Baseviviendas_resumen <- summary(Baseviviendas)
+Baseviviendas_resumen
+```
+
+```{r}
+# Filtrar los datos para mostrar solo las primeras 10 filas y las columnas 'precio' y 'zona'
+Baseviviendas_subset <- Baseviviendas[1:10, c('preciom', 'zona')]
+
+# Mostrar el conjunto de datos filtrado
+Baseviviendas_subset
+```
+
+```{r}
+# Crear un gráfico de dispersión entre 'areaconst' y 'preciom'
+plot(Baseviviendas$areaconst, Baseviviendas$preciom)
+
+
+
+ggplot(Baseviviendas, aes(x = areaconst, y = preciom)) +
+  geom_point() +
+  labs(title = "Relación entre Área Construida y Precio",
+       x = "Área Construida",
+       y = "Precio") +
+  theme_minimal()
+
+```
+
+
+```{r}
+# Calcular la cantidad de valores faltantes en cada columna y asignarlos a EDA_MICali_faltantes
+Baseviviendas_faltantes <- colSums(is.na(Baseviviendas))
+
+# Mostrar la cantidad de valores faltantes
+Baseviviendas_faltantes
+```
+
+```{r}
+# Histograma de Precios
+ggplot(Baseviviendas, aes(x = preciom)) +
+  geom_histogram(binwidth = 50, fill = "#007bff", color = "black") +
+  labs(title = "Distribución de Precios",
+       x = "Precio",
+       y = "Frecuencia")
+```
+
+
+```{r}
+# Gráfico de Dispersión con Color por Zona (sin valores NA)
+ggplot(Baseviviendas %>% drop_na(zona), aes(x = areaconst, y = preciom, color = zona)) +
+  geom_point() +
+  labs(title = "Relación entre Área Construida y Precio por Zona",
+       x = "Área Construida",
+       y = "Precio")
+
+```
+
+```{r}
+# Boxplot de Precios por Zona (sin valores NA)
+ggplot(Baseviviendas %>% drop_na(zona), aes(x = zona, y = preciom)) +
+  geom_boxplot(fill = "#007bff", color = "black") +
+  labs(title = "Distribución de Precios por Zona",
+       x = "Zona",
+       y = "Precio")
+
+```
+
+
+```{r}
+# Instalar el paquete si no está instalado
+if (!requireNamespace("corrplot", quietly = TRUE)) {
+  install.packages("corrplot")
+}
+
+# Cargar el paquete
+library(corrplot)
+
+# Cálculo de la Matriz de Correlación
+correlation_matrix <- cor(Baseviviendas[, c("preciom", "areaconst", "parquea", "habitac")])
+
+# Visualización de la Matriz de Correlación usando corrplot()
+corrplot(correlation_matrix,
+         method = "color",  # Puedes ajustar el método de visualización
+         tl.col = "black",
+         tl.srt = 45,
+         addCoef.col = "black",  # Color de los coeficientes de correlación
+         number.cex = 0.7,  # Tamaño de los números en la visualización
+         tl.cex = 0.7,  # Tamaño de las etiquetas en los ejes
+         title = "Matriz de Correlación")
+```
+
+## 4. Resultados
+## 5. Discusión
+## 6. Conclusiones
+## 7. Anexos
