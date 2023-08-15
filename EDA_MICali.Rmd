@@ -72,7 +72,7 @@ if (!requireNamespace("tinytex", quietly = TRUE)) {
 
 ```
 
-```{r , echo=FALSE}
+```{r , message=FALSE, echo=FALSE}
 # Paquete para crear tarjetas interactivas
 library(htmlwidgets)
 library(bs4Dash)
@@ -114,32 +114,33 @@ El informe está estructurado en varios apartados, que incluyen objetivos, méto
 Lectura de la base de datos desde archivo CSV, en mi caso la hice mediante el uso del fichero remitido por la profesora denominado "vivienda_faltantes.csv", con las siguientes acciones en RStudio: File, Import DataSet, From Text(readr) y el nombre del archivo se paso como atributo a la variable "Baseviviendas":
 
 
-```{r}
+Lectura del dataset desde (readr) y se asigno a una variable, se muestra la cabecera de los datos:
+```{r , echo=FALSE}
 
 Baseviviendas <- read_csv("vivienda_faltantes.csv")
 head(Baseviviendas)
 
 ```
 
-```{r}
+
+Utilice la función summary para obtener los estadisticos básicos y estos son asignados a una variables para su visualiazación:
+```{r , echo=FALSE}
 
 Baseviviendas_resumen <- summary(Baseviviendas)
 Baseviviendas_resumen
 ```
 
-```{r}
-# Filtrar los datos para mostrar solo las primeras 10 filas y las columnas 'precio' y 'zona'
+Para identificar Filtrar los datos para mostrar solo las primeras 10 filas y las columnas 'precio' y 'zona', luego mostrar el conjunto de datos filtrado:
+```{r , echo=FALSE} 
+
 Baseviviendas_subset <- Baseviviendas[1:10, c('preciom', 'zona')]
 
-# Mostrar el conjunto de datos filtrado
+
 Baseviviendas_subset
 ```
 
-```{r}
-# Crear un gráfico de dispersión entre 'areaconst' y 'preciom'
-plot(Baseviviendas$areaconst, Baseviviendas$preciom)
-
-
+En este apartado se pretende mostrar si existe relación mediante un gráfico de dispersión entre 'areaconst' y 'preciom'
+```{r , echo=FALSE}
 
 ggplot(Baseviviendas, aes(x = areaconst, y = preciom)) +
   geom_point() +
@@ -151,26 +152,9 @@ ggplot(Baseviviendas, aes(x = areaconst, y = preciom)) +
 ```
 
 
-```{r}
-# Calcular la cantidad de valores faltantes en cada columna y asignarlos a EDA_MICali_faltantes
-Baseviviendas_faltantes <- colSums(is.na(Baseviviendas))
+En este Gráfico de Dispersión se incluyó una tercer variable categorica no numerica Zona con Color en este caso los valores  NA se eliminan y el resultado obtenido guarda concordancia con el resultado inmediatamente anterior.
+```{r , echo=FALSE}
 
-# Mostrar la cantidad de valores faltantes
-Baseviviendas_faltantes
-```
-
-```{r}
-# Histograma de Precios
-ggplot(Baseviviendas, aes(x = preciom)) +
-  geom_histogram(binwidth = 50, fill = "#007bff", color = "black") +
-  labs(title = "Distribución de Precios",
-       x = "Precio",
-       y = "Frecuencia")
-```
-
-
-```{r}
-# Gráfico de Dispersión con Color por Zona (sin valores NA)
 ggplot(Baseviviendas %>% drop_na(zona), aes(x = areaconst, y = preciom, color = zona)) +
   geom_point() +
   labs(title = "Relación entre Área Construida y Precio por Zona",
@@ -179,8 +163,31 @@ ggplot(Baseviviendas %>% drop_na(zona), aes(x = areaconst, y = preciom, color = 
 
 ```
 
+
+Calculo de la cantidad de valores faltantes en cada columna y asignarlos a EDA_MICali_faltantes para su reconocimiento:
 ```{r}
-# Boxplot de Precios por Zona (sin valores NA)
+
+Baseviviendas_faltantes <- colSums(is.na(Baseviviendas))
+
+# Mostrar la cantidad de valores faltantes
+Baseviviendas_faltantes
+```
+
+Histograma de Precios:
+```{r , echo=FALSE}
+
+ggplot(Baseviviendas, aes(x = preciom)) +
+  geom_histogram(binwidth = 50, fill = "#007bff", color = "black") +
+  labs(title = "Distribución de Precios",
+       x = "Precio",
+       y = "Frecuencia")
+```
+
+
+
+Boxplot de Precios por Zona (sin valores NA)
+```{r , echo=FALSE}
+
 ggplot(Baseviviendas %>% drop_na(zona), aes(x = zona, y = preciom)) +
   geom_boxplot(fill = "#007bff", color = "black") +
   labs(title = "Distribución de Precios por Zona",
@@ -189,8 +196,8 @@ ggplot(Baseviviendas %>% drop_na(zona), aes(x = zona, y = preciom)) +
 
 ```
 
-
-```{r}
+Analisis de Matriz de correlación 
+```{r , echo=FALSE}
 # Instalar el paquete si no está instalado
 if (!requireNamespace("corrplot", quietly = TRUE)) {
   install.packages("corrplot")
@@ -204,7 +211,7 @@ correlation_matrix <- cor(Baseviviendas[, c("preciom", "areaconst", "parquea", "
 
 # Visualización de la Matriz de Correlación usando corrplot()
 corrplot(correlation_matrix,
-         method = "color",  # Puedes ajustar el método de visualización
+         method = "color",  
          tl.col = "black",
          tl.srt = 45,
          addCoef.col = "black",  # Color de los coeficientes de correlación
@@ -213,18 +220,42 @@ corrplot(correlation_matrix,
          title = "Matriz de Correlación")
 ```
 
-```{r}
-# Crear un gráfico de barras para mostrar el tipo de viviendas más vendidas
+Crear un gráfico de barras para mostrar el tipo de viviendas con más stock
+```{r , echo=FALSE}
+
 ggplot(Baseviviendas, aes(x = tipo)) +
   geom_bar(fill = "#007bff") +
-  labs(title = "Tipos de Viviendas Más Vendidas",
+  labs(title = "Tipos de Viviendas disponibles",
        x = "Tipo de Vivienda",
-       y = "Cantidad Vendida")
+       y = "Cantidad disponible")
 ```
 
 
-
 ## 4. Resultados
+
+
+En esta sección, con respecto al objetivo de la guía, se observa una desconexión con la actividad planteada. Aunque el caso se centra en el análisis de mercado, la validación de los datos en la base de datos "viviendas_faltantes" sugiere que estos registros corresponden a propiedades que no han sido objeto de gestión comercial, es decir, bienes que no han sido destinados a actividades comerciales.
+
+Al analizar el caso, se plantea la identificación de un nicho de mercado, el desarrollo de estrategias de marketing, la fijación de precios de venta y la provisión de servicios personalizados a los clientes. Por consiguiente, se esperaba encontrar una capa de información que incluyera, al menos, fechas de venta, precios de venta ofrecidos y la identificación de posibles descuentos. La ausencia de estos datos genera un nivel de subjetividad considerable en las conclusiones que se pueden obtener.
+
+Es importante destacar que la carencia de información relevante, como fechas de venta y detalles sobre los precios ofertados y los descuentos aplicados, limita la capacidad de realizar un análisis completo y preciso. Esto podría dificultar la formulación de conclusiones sólidas y bien fundamentadas en relación con los objetivos planteados. Por lo tanto, es necesario abordar esta limitación para garantizar que las conclusiones extraídas sean respaldadas de manera objetiva por la información disponible.
+
+
 ## 5. Discusión
+
+De acuerdo a instrucción de la profesora no se realiza.
+
 ## 6. Conclusiones
+
+
+La actividad que llevé a cabo me proporcionó un valioso acercamiento a la herramienta RStudio. En mi caso particular, carecía de conocimientos previos sobre esta herramienta, y en mi entorno laboral no tengo la oportunidad de aplicar procesos estadísticos, a excepción del uso de herramientas de ofimática para representar información a través de tablas dinámicas basadas en la lógica del negocio.
+
+Es importante señalar que el material de revisión disponible en Brightspace no me brindó una guía clara para abordar este punto de partida, especialmente para aquellos de nosotros que no teníamos familiaridad con esta herramienta. No obstante, gracias a la instrucción del tablero proporcionado por la profesora y a la búsqueda de recursos en forma de video tutoriales en otras plataformas, logré completar exitosamente esta tarea. Sin embargo, reconozco que existe margen para la mejora, y me comprometo a enfocarme en fortalecer la calidad y el impacto de mis futuros trabajos.
+
+En resumen, esta experiencia me permitió adquirir destrezas significativas en el uso de RStudio y superar desafíos relacionados con la falta de conocimiento previo. Considero que esta adquisición será de gran utilidad en mi trayectoria académica y profesional, permitiéndome realizar análisis estadísticos con mayor confianza y eficacia, a la vez que trabajaré en mejorar la calidad de mis entregas en futuros proyectos.
+
 ## 7. Anexos
+
+Si deseas acceder al código fuente utilizado en la realización de este proyecto, así como a los archivos generados dentro de su carpeta respectiva, te invito a consultar el siguiente repositorio en GitHub:
+
+<href>https://github.com/Jartpuro/InformeEDA.git</href>
