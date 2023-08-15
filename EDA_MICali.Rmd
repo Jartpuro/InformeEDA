@@ -34,7 +34,6 @@ if (!requireNamespace("tinytex", quietly = TRUE)) {
   tinytex::install_tinytex()
 }
 
-
 ```
 
 ```{css, echo=FALSE}
@@ -73,7 +72,7 @@ if (!requireNamespace("tinytex", quietly = TRUE)) {
 
 ```
 
-```{r, echo=FALSE}
+```{r , echo=FALSE}
 # Paquete para crear tarjetas interactivas
 library(htmlwidgets)
 library(bs4Dash)
@@ -97,17 +96,17 @@ El informe está estructurado en varios apartados, que incluyen objetivos, méto
 
 ## 2. Objetivos
 
+<p>En este apartado se descibren los objetivos que se pretenden alcanzar de acuerdo a los criterios de entrega de la actividad y en concordancia con el caso de estudio propuesto. </p>
 
 
 <ul class="round-bullet-objetivos">
   <li>Objetivo general:</li>
-  <p>Texto 1</p>
+  <p>Realizar un  analisis explotario de datos EDA, que permita a la empresa B&C tomar decisiones sobre su negocio</p>
   <li>Objetivo especifico 1:</li>
-  <p>Texto 1</p>
+  <p>Realizar analisis descriptivo de los datos recibidos, <b><i>vivienda_faltantes</i></b></p>
   <li>Especifico 2:</li>
-  <p>Texto 1</p>
+  <p>identificar las tendencias y patrones de los datos recibidos, <b><i>vivienda_faltantes</i></b></p>
 </ul>
-
 
 
 ## 3. Métodos
@@ -213,6 +212,17 @@ corrplot(correlation_matrix,
          tl.cex = 0.7,  # Tamaño de las etiquetas en los ejes
          title = "Matriz de Correlación")
 ```
+
+```{r}
+# Crear un gráfico de barras para mostrar el tipo de viviendas más vendidas
+ggplot(Baseviviendas, aes(x = tipo)) +
+  geom_bar(fill = "#007bff") +
+  labs(title = "Tipos de Viviendas Más Vendidas",
+       x = "Tipo de Vivienda",
+       y = "Cantidad Vendida")
+```
+
+
 
 ## 4. Resultados
 ## 5. Discusión
